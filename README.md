@@ -11,3 +11,5 @@ This repository is dedicated for learning Qiskit
     - Designed and implemented a variational quantum classifier (VQC) with a custom feature map and variational circuit to perform multi-class classification.
     - Trained the model using the SPSA optimizer.
     - Visualized data distribution, model predictions, and classification errors using Matplotlib to evaluate and communicate model performance.
+
+  - QML is the folder where I stores my data, test algorithms that supports my research in Quantum Computing using Qiskit Library and other tools!  
