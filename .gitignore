@@ -5,3 +5,16 @@ env.yml
 quantumrings.conf
 requirements.txt
 token.txt
+**
+
+# Allow all directories (but not their contents)
+!*/
+
+# Allow PDF files in any directory
+!**/*.pdf
+!**/*.tex
+!**/*.png
+!**/*.jpeg
+!**/*.ipynb
+# Ensure the .gitignore file itself is not ignored
+!.gitignore

@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+\title{QUBO to Ising Model Transformation}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+Starting from the equation (13) from the paper, we have the following QUBO problem:
+\begin{equation}
+\max_{b} L(b) = \max_{b} \left(\mu''^Tb -qb^T\Sigma''b \underbrace{- \lambda(P''^T b-1)^2}_{penalty}\right)
+\end{equation}
+Now we expand its component:
+    \begin{align}
+        \mu''^Tb &= \sum_{i}^{} u''_i b_i, \\
+         -qb^T\Sigma''b &= -q \sum_{i,j}^{} \Sigma''_{ij} b_i b_j, \\
+            -\lambda(P''^T b-1)^2 &= -\lambda \left(\sum_{i}^{} P''_i b_i - 1\right)^2.
+    \end{align}
+We have the transformation of \(b_i = \frac{1+s_i}{2}; b_j = \frac{1+s_j}{2}\)
+\begin{align}
+     \sum_{i}^{} u''_i b_i &= \sum_{i}^{} u''_i \frac{1+s_i}{2} \\
+     &= \frac{1}{2} \sum_{i}^{} u''_i + \frac{1}{2} \sum_{i}^{} u''_i s_i, \\
+\end{align}
+\end{document}
