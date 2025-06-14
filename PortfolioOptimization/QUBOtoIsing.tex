@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 
-\title{QUBO to Ising Model Transformation}
+\title{QUBO to Ising Hamiltonian Model Transformation}
 \author{}
 \date{\today}
 
@@ -11,17 +11,57 @@
 \maketitle
 Starting from the equation (13) from the paper, we have the following QUBO problem:
 \begin{equation}
-\max_{b} L(b) = \max_{b} \left(\mu''^Tb -qb^T\Sigma''b \underbrace{- \lambda(P''^T b-1)^2}_{penalty}\right)
+	\max_{b} L(b) = \max_{b} \left(\mu''^Tb -qb^T\Sigma''b \underbrace{- \lambda(P''^T b-1)^2}_{penalty}\right)
 \end{equation}
 Now we expand its component:
-    \begin{align}
-        \mu''^Tb &= \sum_{i}^{} u''_i b_i, \\
-         -qb^T\Sigma''b &= -q \sum_{i,j}^{} \Sigma''_{ij} b_i b_j, \\
-            -\lambda(P''^T b-1)^2 &= -\lambda \left(\sum_{i}^{} P''_i b_i - 1\right)^2.
-    \end{align}
+\begin{align}
+	\mu''^Tb              & = \sum_{i}^{} u''_i b_i,                             \\
+	-qb^T\Sigma''b        & = -q \sum_{i,j}^{} \Sigma''_{ij} b_i b_j,            \\
+	-\lambda(P''^T b-1)^2 & = -\lambda \left(\sum_{i}^{} P''_i b_i - 1\right)^2.
+\end{align}
 We have the transformation of \(b_i = \frac{1+s_i}{2}; b_j = \frac{1+s_j}{2}\)
 \begin{align}
-     \sum_{i}^{} u''_i b_i &= \sum_{i}^{} u''_i \frac{1+s_i}{2} \\
-     &= \frac{1}{2} \sum_{i}^{} u''_i + \frac{1}{2} \sum_{i}^{} u''_i s_i, \\
+	\sum_{i}^{} u''_i b_i & = \sum_{i}^{} u''_i \frac{1+s_i}{2}                                  \\
+	                      & = \underbrace{\frac{1}{2} \sum_{i}^{} u''_i} + \underbrace{\frac{1}{2} \sum_{i}^{} u''_i s_i}, 
+\end{align}
+Substitute \(b_ib_j\)
+\begin{equation}
+	b_ib_j = \frac{1+s_i}{2} \cdot \frac{1+s_j}{2}  = \frac{(1+s_i)(1+s_j)}{4} = \frac{1}{4}(1 + s_i + s_j + s_is_j)
+\end{equation}
+\begin{align}
+	-q \sum_{i,j}^{} \Sigma''_{ij} b_i b_j & = -q \sum_{i,j}^{} \Sigma''_{ij} \frac{1}{4}(1 + s_i + s_j + s_is_j)                                                                                                                   \\
+	                                       & = \underbrace{-\frac{q}{4} \sum_{i,j}^{} \Sigma''_{ij}} \underbrace{-\frac{q}{4} \sum_{i,j}^{} \Sigma''_{ij} s_i - \frac{q}{4} \sum_{i,j}^{} \Sigma''_{ij} s_j} \underbrace{- \frac{q}{4} \sum_{i,j}^{} \Sigma''_{ij} s_is_j}
+\end{align}
+Since \(\Sigma''\) is symmetric, we have:
+\begin{equation}
+	-\frac{q}{4} \sum_{i,j}^{} \Sigma''_{ij} s_i -\frac{q}{4} \sum_{i,j}^{} \Sigma''_{ij} s_j = -\frac{q}{2} \sum_{i}^{} \left(\sum_{j}^{}\Sigma''_{ij}\right) s_i
+\end{equation}
+Penalty term:
+\begin{align}
+    -\lambda \left(\sum_{i}^{} P''_i b_i - 1\right)^2 &= -\lambda \left(\sum_{i}^{} P''_i \frac{1+s_i}{2} - 1\right)^2 \\
+    &= -\lambda \left(\frac{1}{2} \sum_{i}^{}P''_i(1+s_i) -1\right)^2 \\
+    &= -\lambda \left(\frac{1}{2} \sum_{i}^{}P''_i + \frac{1}{2} \sum_{i}^{}P''_i s_i - 1\right)^2 
+\end{align}
+According to equation (15) from the paper, we have the penalty term in the as:
+\begin{equation}
+    +\lambda \left(\sum_{i}^{}\pi_i s_i - \beta\right)^2 
+\end{equation}
+Let $\pi_i = \frac{1}{2} P''_i\) and \(\beta = 1-\frac{1}{2} \sum_{i}^{} P''_i $, equation (13) can be written as (flip the sign to convert maximization to minimization):
+\begin{align}
+    &+\lambda \left(\sum_{i}^{}\pi_i s_i - \beta\right)^2 \\
+    &= \lambda \left(\left(\sum_{i}^{}\pi_i s_i\right)^2 - 2 \left(\sum_{i}^{}\pi_i s_i\right)\beta + \beta^2 \right) \\
+\end{align}
+The Ising objective function from the paper is written as:
+\begin{equation}
+    \min_{s} L(s) : \min_s \left(\sum_{i}^{}h_i s_i + \sum_{i,j}^{}J_{i,j} s_i s_j + \lambda \left(\sum_{i}^{}\pi_i s_i - \beta\right)^2\right),
+\end{equation}
+\begin{equation*}
+    \text{s.t} \quad s_{i,j} \in \{-1, 1\} \quad \forall i,j
+\end{equation*}
+From equations (6), (9) , (10), we can derive $h$ , $J$, and other constant as:
+\begin{align}
+    h_i & = \frac{1}{2} \mu''_i -\frac{q}{2} \sum_{j}^{}\Sigma''_{ij}\\
+    J_{i,j} & = -\frac{q}{4} \Sigma''_{i,j} \\
+    \text{Constant} &= \frac{1}{2} \sum_{i}^{} u''_i - \frac{q}{4} \sum_{i,j}^{} \Sigma''_{ij} 
 \end{align}
 \end{document}
